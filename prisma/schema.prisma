@@ -1,0 +1,115 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+
+model Expense {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  title     String   @db.VarChar(255)
+  amount    Int
+}
+
+
+// prisma/schema.prisma
+model TelegramUser {
+  id          String    @id @default(cuid()) 
+  chatId     String     @unique
+  username   String?
+  sensorlist Sensorlist[]
+  status      Status[] // One-to-many relationship with Status
+ // issues      Issue[]  // One-to-many relationship with Issue
+  user  User ?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt @default(now()) 
+}
+
+model Sensorlist{
+    id             Int       @id @default(autoincrement())
+    objid          Int         @unique
+     telegramUserId  String?  
+   telegramUser TelegramUser? @relation(fields: [telegramUserId ], references: [id], onDelete: Cascade)
+
+}
+
+model Prtgdata{
+  id             Int       @id @default(autoincrement())
+  objid          Int         @unique
+  name           String
+  status         String
+  tags           String
+  device         String
+  downtime       String
+  downtimetime   String
+  downtimesince  String?
+  uptime         String
+  uptimetime     String
+  warnsens       String
+  partialdownsens String
+  downsens       String
+  message        String
+  lastup         String
+  lastcheck      String
+  comments       String?
+  minigraph      String
+ createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+
+
+model User {
+  id          String   @id @default(cuid())
+  name        String
+  phone        Int     @unique
+  secreateKey  Int     @unique
+ 
+  telegramUser TelegramUser? @relation(fields: [TelegramUserId], references: [id])
+  TelegramUserId String?   @unique
+
+   createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+model Issue {
+  id          String   @id @default(cuid())
+  description String
+  status      IssueStatus 
+ 
+  //telegramUserId        String        // Foreign key to the User
+ // telegramUser        TelegramUser        @relation(fields: [telegramUserId  ], references: [id])
+   createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
+ 
+model Status {
+  id          String   @id @default(cuid())
+  sensorId    Int      
+  status      UserStatus   @default(STOP) // Enum to define user status
+  acknowledgment String?   // A message or notes for acknowledgment
+
+  telegramUserId      String          // Foreign key to the User
+  telegramUser        TelegramUser         @relation(fields: [telegramUserId], references: [id])
+   createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+}
+
+enum IssueStatus {
+  STOP
+  SLOW
+}
+
+enum UserStatus {
+  STOP
+  WORKING
+  IDLE
+  ON_LEAVE
+}
