@@ -49,6 +49,7 @@ export default function TelegramAuth() {
 
 
         const initData = WebApp.initData
+        
         if (initData) {
             try {
                 const response = await fetch('/api/auth', {
@@ -86,7 +87,7 @@ export default function TelegramAuth() {
 
                 <div className="fixed inset-0 flex items-center justify-center bg-ethLime-400 text-white">
                 <div className='   animate-spin'>
-                    <h1>{ JSON.stringify({ initData })}</h1>
+                    <h1></h1>
                  <LoaderCircle size={100} strokeWidth={1.25} color="#6B5000" />
               
                  </div>
