@@ -17,8 +17,7 @@ export default function TelegramAuth() {
             const WebApp = (await import('@twa-dev/sdk')).default
             WebApp.ready()
           
-            // Set the Mini App bar color to a custom color, e.g., dark grey
-            WebApp.setHeaderColor('#1F1F1F')
+          
            
           }
       
